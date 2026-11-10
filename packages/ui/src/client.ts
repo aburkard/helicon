@@ -89,7 +89,7 @@ export interface HeliconClient {
   importOmpUsage(): Promise<import("./types.js").OmpImportResult>;
   listSessions(options?: { archived?: boolean }): Promise<SessionSummary[]>;
   discover(cwd?: string): Promise<void>;
-  startSession(cwd: string, options?: { approvalMode?: ApprovalMode; modelId?: string; accountId?: string | null }): Promise<SessionSummary>;
+  startSession(cwd: string, options?: { approvalMode?: ApprovalMode; modelId?: string; accountId?: string | null; permissionProfile?: string }): Promise<SessionSummary>;
   loadTranscript(sessionId: string): Promise<TranscriptLoad>;
   /**
    * A server path the browser loads by itself, like an attachment's bytes, returned with whatever the

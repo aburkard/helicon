@@ -1306,11 +1306,16 @@ export class HeliconServer {
       if (accountRaw !== undefined && accountRaw !== null && typeof accountRaw !== "string") {
         throw new HttpError(400, "accountId must be a string.");
       }
+      const profileRaw = body["permissionProfile"];
+      if (profileRaw !== undefined && profileRaw !== null && (typeof profileRaw !== "string" || profileRaw.trim().length === 0)) {
+        throw new HttpError(400, "permissionProfile must be a non-empty string.");
+      }
       const session = await this.startSession(
         normalizeCwd(raw),
         mode === undefined || mode === null ? undefined : (mode as ApprovalMode),
         str(body["modelId"]) ?? undefined,
         typeof accountRaw === "string" && accountRaw.length > 0 ? accountRaw : null,
+        typeof profileRaw === "string" ? profileRaw : undefined,
       );
       this.json(res, 200, { session });
       return true;
@@ -2478,6 +2483,7 @@ export class HeliconServer {
     approvalMode?: ApprovalMode,
     modelId?: string,
     accountId: string | null = null,
+    permissionProfile?: string,
   ): Promise<Record<string, unknown>> {
     if (accountId && isSshCwd(cwd)) {
       throw new HttpError(400, SSH_ACCOUNT_MESSAGE);
@@ -2489,6 +2495,7 @@ export class HeliconServer {
       workspaceRoot: this.hostPathFor(cwd),
       approvalMode,
       modelId,
+      permissionProfile,
     });
     const raw = asRecord(asRecord(started.raw)?.["session"]);
     const record = this.store.recordSession({

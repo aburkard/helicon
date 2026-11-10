@@ -83,9 +83,9 @@ class FakeClient implements HeliconClient {
     return [SESSION];
   }
   async discover() {}
-  startCalls: { cwd: string; approvalMode?: string; modelId?: string; accountId: string | null }[] = [];
-  async startSession(cwd: string, options?: { approvalMode?: string; modelId?: string; accountId?: string | null }) {
-    this.startCalls.push({ cwd, approvalMode: options?.approvalMode, modelId: options?.modelId, accountId: options?.accountId ?? null });
+  startCalls: { cwd: string; approvalMode?: string; modelId?: string; accountId: string | null; permissionProfile?: string }[] = [];
+  async startSession(cwd: string, options?: { approvalMode?: string; modelId?: string; accountId?: string | null; permissionProfile?: string }) {
+    this.startCalls.push({ cwd, approvalMode: options?.approvalMode, modelId: options?.modelId, accountId: options?.accountId ?? null, permissionProfile: options?.permissionProfile });
     return { ...SESSION, accountId: options?.accountId ?? null };
   }
   loadTranscript() {
@@ -841,6 +841,19 @@ describe("HeliconController", () => {
     await controller.send("hello");
     assert.equal(client.startCalls.at(-1)?.approvalMode, "allowAll");
     assert.equal(controller.store.get().threads[SESSION.sessionId]?.fold.meta.approvalMode, "allowAll");
+    stop();
+  });
+
+  it("starts new threads under auto-review when the preference is on, and on the host default when it is off", async () => {
+    const client = new FakeClient();
+    const { controller, stop } = await started(client, "");
+    controller.newThread();
+    await controller.send("hello");
+    assert.equal(client.startCalls.at(-1)?.permissionProfile, undefined, "off sends no profile pick");
+    controller.setPrefs({ autoReview: true });
+    controller.newThread();
+    await controller.send("hello again");
+    assert.equal(client.startCalls.at(-1)?.permissionProfile, ":auto-review");
     stop();
   });
 

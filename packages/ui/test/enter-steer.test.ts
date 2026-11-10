@@ -27,6 +27,16 @@ describe("resolveSteer", () => {
   });
 });
 
+describe("autoReview pref", () => {
+  it("defaults to off and survives a prefs round-trip", async () => {
+    const { defaultPrefs, revivePrefs } = await import("../src/model/store.js");
+    assert.equal(defaultPrefs().autoReview, false);
+    assert.equal(revivePrefs({}, defaultPrefs()).autoReview, false);
+    assert.equal(revivePrefs({ autoReview: true }, defaultPrefs()).autoReview, true);
+    assert.equal(revivePrefs({ autoReview: "yes" }, defaultPrefs()).autoReview, false);
+  });
+});
+
 describe("steerByDefault pref", () => {
   it("defaults to off and survives a prefs round-trip", async () => {
     const { defaultPrefs, revivePrefs } = await import("../src/model/store.js");

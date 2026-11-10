@@ -232,13 +232,14 @@ export class WebHeliconClient implements HeliconClient {
 
   async startSession(
     cwd: string,
-    options?: { approvalMode?: ApprovalMode; modelId?: string; accountId?: string | null },
+    options?: { approvalMode?: ApprovalMode; modelId?: string; accountId?: string | null; permissionProfile?: string },
   ): Promise<SessionSummary> {
     const result = await call<{ session: SessionSummary }>("POST", "/api/sessions", {
       cwd,
       approvalMode: options?.approvalMode,
       modelId: options?.modelId,
       accountId: options?.accountId ?? undefined,
+      permissionProfile: options?.permissionProfile,
     });
     return result.session;
   }

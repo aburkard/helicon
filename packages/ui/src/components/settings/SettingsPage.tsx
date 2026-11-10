@@ -439,6 +439,12 @@ export function SettingsPage() {
               ) : null}
             </div>
           </Row>
+          <Row
+            label="Auto-review"
+            description="New threads use Muse's built-in safety check: it approves actions it judges safe and asks you when unsure. Needs a Muse sign-in. Threads already open keep what they started with."
+          >
+            <Toggle checked={prefs.autoReview} label="Auto-review" onChange={(on) => controller.setPrefs({ autoReview: on })} />
+          </Row>
           <Row label="Reasoning effort" description="How long the model thinks before answering. Auto lets Muse choose per turn.">
             <Pick<ReasoningEffort | null>
               value={prefs.effort}
