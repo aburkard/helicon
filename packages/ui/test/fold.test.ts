@@ -500,6 +500,27 @@ describe("background command completions (Muse Code 1.4.12)", () => {
     assert.deepEqual(turn.after.map((e) => e.itemId), ["b1"]);
   });
 
+  it("keep the reply final when a hook run lands after it, and show the hook below the reply", () => {
+    const before = liveEvents.reduce(applyEvent, emptyFold());
+    const turnsBefore = buildTurns(before);
+    const last = turnsBefore[turnsBefore.length - 1]!;
+    assert.ok(last.final, "the fixture's last turn has a final reply");
+
+    const hook = (itemId: string): ViewEvent => ({
+      at: 11,
+      method: "item/completed",
+      params: {
+        sessionId: "s1",
+        item: { itemId, kind: "hookRun", status: "completed", revision: 1, turnId: last.turnId },
+      },
+    });
+    const turns = buildTurns(applyEvents(before, [hook("h1"), hook("h2")]));
+    const turn = turns[turns.length - 1]!;
+    assert.equal(turn.final?.itemId, last.final.itemId);
+    assert.deepEqual(turn.entries.map((e) => e.itemId), last.entries.map((e) => e.itemId));
+    assert.deepEqual(turn.after.map((e) => e.itemId), ["h1", "h2"]);
+  });
+
   it("show a completion outside any turn on its own", () => {
     const before = liveEvents.reduce(applyEvent, emptyFold());
     const turns = buildTurns(applyEvents(before, [completion("b2", null)]));
