@@ -111,8 +111,12 @@ export interface ThreadFold {
 // Kinds added in Muse 1.4.11 and 1.4.12 are hidden until the UI has a design for them. Shown as generic rows, a trailing one would move a turn's final reply into the work log.
 export const HIDDEN_KINDS: ReadonlySet<string> = new Set(["reminderChild", "damagedRange", "scheduledFire", "overdueNotice"]);
 
-/** Kinds that report on earlier work and can land after a turn's reply. They don't stop that reply being the turn's final one. */
-export const NOTICE_KINDS: ReadonlySet<string> = new Set(["backgroundTerminalCompletion"]);
+/**
+ * Kinds that report on earlier work and can land after a turn's reply. They don't stop that reply
+ * being the turn's final one. Hooks fire around the work they observe, so a Stop hook's run lands
+ * after the reply it followed; without this the reply stays folded into the work log.
+ */
+export const NOTICE_KINDS: ReadonlySet<string> = new Set(["backgroundTerminalCompletion", "hookRun"]);
 
 export function emptyFold(): ThreadFold {
   return {
