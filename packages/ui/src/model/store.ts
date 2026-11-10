@@ -90,6 +90,8 @@ export interface Prefs {
   baseline: string;
   defaultMode: ApprovalMode;
   defaultModelId: string | null;
+  /** New threads start under Muse's `:auto-review` profile, so its safety check decides safe actions. */
+  autoReview: boolean;
   effort: ReasoningEffort | null;
   /** The last project a new thread was started in. */
   lastProject: string | null;
@@ -164,6 +166,7 @@ export function defaultPrefs(now = new Date().toISOString()): Prefs {
     baseline: now,
     defaultMode: "onRequest",
     defaultModelId: null,
+    autoReview: false,
     effort: null,
     lastProject: null,
     contributorAck: false,
@@ -385,6 +388,7 @@ export function revivePrefs(raw: unknown, fallback: Prefs): Prefs {
     codeTheme: pick("codeTheme", (v) => CODE_THEMES.includes(v as CodeTheme)),
     defaultMode: pick("defaultMode", (v) => v === "onRequest" || v === "promptUnmatched" || v === "denyUnmatched" || v === "allowAll"),
     defaultModelId: pick("defaultModelId", (v) => v === null || typeof v === "string"),
+    autoReview: pick("autoReview", (v) => typeof v === "boolean"),
     effort: pick("effort", (v) => v === null || ["none", "minimal", "low", "medium", "high", "xhigh", "max", "ultra"].includes(v as string)),
     lastProject: pick("lastProject", (v) => v === null || typeof v === "string"),
     contributorAck: pick("contributorAck", (v) => typeof v === "boolean"),

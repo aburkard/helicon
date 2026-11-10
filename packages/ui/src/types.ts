@@ -1,6 +1,9 @@
 /** Domain types shared by the UI, the client contract and the pure fold logic. */
 
 export type ApprovalMode = "allowAll" | "denyUnmatched" | "onRequest" | "promptUnmatched";
+
+/** Muse's built-in profile whose LLM judge decides safe actions and asks a person when unsure. */
+export const AUTO_REVIEW_PROFILE = ":auto-review";
 export type ReasoningEffort = "none" | "minimal" | "low" | "medium" | "high" | "xhigh" | "max" | "ultra";
 export type IfBusy = "queue" | "steer";
 

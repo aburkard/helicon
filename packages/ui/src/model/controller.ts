@@ -1,4 +1,5 @@
 import { errorKind, errorMessage, type HeliconClient } from "../client.js";
+import { AUTO_REVIEW_PROFILE } from "../types.js";
 import type {
   ApprovalMode,
   ApprovalRequest,
@@ -1178,6 +1179,8 @@ export class HeliconController {
         approvalMode,
         modelId: defaultModelId ?? undefined,
         accountId,
+        // Muse's own safety check decides safe actions; omitted keeps the host's default profile.
+        permissionProfile: this.state.prefs.autoReview ? AUTO_REVIEW_PROFILE : undefined,
       });
       const base = emptyFold();
       const fold: ThreadFold = {

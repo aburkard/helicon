@@ -512,7 +512,7 @@ export class DemoClient implements HeliconClient {
   }
   async discover() {}
 
-  async startSession(cwd: string, _options?: { approvalMode?: string; modelId?: string; accountId?: string | null }): Promise<SessionSummary> {
+  async startSession(cwd: string, _options?: { approvalMode?: string; modelId?: string; accountId?: string | null; permissionProfile?: string }): Promise<SessionSummary> {
     const id = uid("demo");
     const s = new Script(id, cwd, Date.now() - 1000);
     const entry: Seeded = { summary: summary(id, cwd, "New thread", Date.now(), 0), events: s.events, approvals: [] };

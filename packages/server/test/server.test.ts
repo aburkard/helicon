@@ -337,6 +337,17 @@ describe("HeliconServer", () => {
     assert.equal(bad.status, 400);
   });
 
+  it("forwards a picked permission profile to session/start and rejects bad ones", async () => {
+    const connection = new FakeConnection();
+    const { base } = await start(connection);
+    const created = await send(base, "/api/sessions", { cwd: "/w", permissionProfile: ":auto-review" });
+    assert.equal(created.status, 200);
+    const startCall = connection.calls.find((c) => c.method === "session/start");
+    assert.equal(startCall?.params?.["permissionProfile"], ":auto-review");
+    assert.equal((await send(base, "/api/sessions", { cwd: "/w", permissionProfile: 42 })).status, 400);
+    assert.equal((await send(base, "/api/sessions", { cwd: "/w", permissionProfile: "" })).status, 400);
+  });
+
   it("requires a token when one is configured", async () => {
     const connection = new FakeConnection();
     const { base } = await start(connection, { token: "secret" });

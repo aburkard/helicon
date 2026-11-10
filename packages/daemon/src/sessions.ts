@@ -100,6 +100,12 @@ export interface StartSessionOptions {
   workspaceRoot?: string;
   approvalMode?: ApprovalMode;
   modelId?: string;
+  /**
+   * A permission profile the host already defines (for example Muse's built-in `:auto-review`,
+   * whose LLM judge decides safe actions). Select, never create: omitted keeps the host default,
+   * and the wire refuses an explicit null, so this is only ever sent when picked.
+   */
+  permissionProfile?: string;
 }
 
 export interface StartedSession {
@@ -251,6 +257,9 @@ export class SessionManager {
     }
     if (options.approvalMode !== undefined) {
       params["approvalMode"] = options.approvalMode;
+    }
+    if (options.permissionProfile !== undefined) {
+      params["permissionProfile"] = options.permissionProfile;
     }
     const result = await this.connection.command("session/start", params);
     const sessionId = sessionIdOf(result);

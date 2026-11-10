@@ -116,6 +116,16 @@ describe("SessionManager", () => {
     await assert.rejects(() => manager.startSession({}), /sessionId/);
   });
 
+  it("passes a permission profile to session/start only when one is picked", async () => {
+    const conn = new FakeConnection();
+    conn.reply("session/start", { session: { sessionId: "abc" } });
+    const manager = new SessionManager(conn);
+    await manager.startSession({ workspaceRoot: "/work/proj", permissionProfile: ":auto-review" });
+    assert.equal(lastCall(conn).params?.["permissionProfile"], ":auto-review");
+    await manager.startSession({ workspaceRoot: "/work/proj" });
+    assert.equal("permissionProfile" in (lastCall(conn).params ?? {}), false, "omitted keeps the host default");
+  });
+
   it("drives turns: send, steer, interrupt, cancel, unqueue", async () => {
     const conn = new FakeConnection();
     conn.reply("turn/start", { status: "accepted", turnId: "t1", disposition: "started" });
